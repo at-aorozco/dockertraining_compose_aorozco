@@ -1,0 +1,28 @@
+version: "3.4"
+services:
+  database_container:
+    image: mysql
+    container_name: "database_container"
+    environment:
+      - MYSQL_DATABASE=VideoGamesDb
+      - MYSQL_USER=admin
+      - MYSQL_PASSWORD=Password
+      - MYSQL_RANDOM_ROOT_PASSWORD=yes
+    ports:
+      - "3018:3306"
+    volumes:
+      - "database_vol:/var/lib/mysql"
+  dockertraining_compose_aorozco:
+    image: ${DOCKER_REGISTRY-}dockertrainingcomposealbertoorozco
+    container_name: "api_container"
+    build:
+      context: .
+      dockerfile: dockertraining_compose_aorozco/Dockerfile
+    ports:
+      - "8091:80"
+    environment:
+      - ConnectionStrings:VideoGamesDb=Server=database_container;Port=3306;Database=VideoGamesDb; Uid=admin; Pwd=Password
+    depends_on:
+      - database_container
+volumes:
+  database_vol:
